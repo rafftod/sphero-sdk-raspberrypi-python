@@ -20,7 +20,7 @@ class SerialObserverPort:
         self.__parser = parser
         self.__ser = Serial(port_id, baud)
         self.__running = True
-        self.__write_queue = Queue()
+        self.__write_queue = Queue(maxsize=10)
         self.__serial_thread = Thread(name="serial_thread", target=self.__serial_rw)
         self.__serial_thread.start()
 
@@ -39,7 +39,6 @@ class SerialObserverPort:
             message (Message): Instance of a Message object
 
         """
-        print(timeout)
         self.__write_queue.put(message.serialise(), timeout=timeout)
 
     def __serial_rw(self):
