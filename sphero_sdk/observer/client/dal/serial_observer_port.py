@@ -39,6 +39,7 @@ class SerialObserverPort:
             message (Message): Instance of a Message object
 
         """
+        print(timeout)
         self.__write_queue.put(message.serialise(), timeout=timeout)
 
     def __serial_rw(self):
