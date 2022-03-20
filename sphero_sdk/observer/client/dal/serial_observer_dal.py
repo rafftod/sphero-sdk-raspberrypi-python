@@ -12,9 +12,9 @@ logger = logging.getLogger(__name__)
 
 
 class SerialObserverDal(SpheroDalBase):
-    __slots__ = ['_port']
+    __slots__ = ["_port"]
 
-    def __init__(self, port_id='/dev/ttyS0', baud=115200):
+    def __init__(self, port_id="/dev/ttyS0", baud=115200):
         SpheroDalBase.__init__(self)
         dispatcher = EventDispatcher()
         parser = ObserverParser(dispatcher)
@@ -41,24 +41,26 @@ class SerialObserverDal(SpheroDalBase):
         message.seq = seq
         message.target = target
         message.is_activity = True
-        message.requests_response = len(outputs) > 0 or self.request_error_responses_only
+        message.requests_response = (
+            len(outputs) > 0 or self.request_error_responses_only
+        )
 
         # Messages that already request a response due to expected outputs don't need this
         # extra flag. They will automatically respond with errors if any are generated.
         # This flag is meant only for commands with no expected output.
-        message.requests_error_response = self.request_error_responses_only if len(outputs) == 0 else False
+        message.requests_error_response = (
+            self.request_error_responses_only if len(outputs) == 0 else False
+        )
 
         for param in inputs:
             message.pack(param.data_type, param.value)
 
-        logger.info('Sending message: %s', message)
+        logger.info("Sending message: %s", message)
 
-        self._port.send(message)
+        self._port.send(message, timeout=timeout)
 
     def close(self):
-        """Closes the serial port, and joins the read/write thread.
-
-        """
+        """Closes the serial port, and joins the read/write thread."""
         self._port.close()
 
     def on_command(self, did, cid, target, handler=None, timeout=None, outputs=None):
