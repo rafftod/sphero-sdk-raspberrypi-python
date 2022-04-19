@@ -20,7 +20,7 @@ class SerialObserverPort:
         self.__parser = parser
         self.__ser = Serial(port_id, baud)
         self.__running = True
-        self.__write_queue = Queue(maxsize=10)
+        self.__write_queue = Queue(maxsize=0)
         self.__serial_thread = Thread(name="serial_thread", target=self.__serial_rw)
         self.__serial_thread.start()
 
